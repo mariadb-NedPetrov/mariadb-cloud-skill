@@ -65,27 +65,31 @@ npx skills add mariadb/skills/mariadb-mcp
 
 ## Installation
 
-### Agent Skills CLI (works across supported tools)
+### Cursor, Codex, Amp, Cline, Gemini CLI, Warp, and others
 
 ```bash
 npx skills add mariadb-JagsR/mariadb-cloud-skill
 ```
 
+Then copy the `references/` folder manually — the CLI currently installs only `SKILL.md`:
+
+```bash
+git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git /tmp/mariadb-cloud-skill
+cp -r /tmp/mariadb-cloud-skill/references ~/.agents/skills/mariadb-cloud/
+```
+
 ### Claude Code / Claude Desktop
 
-```bash
-git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git
-cp -r mariadb-cloud-skill ~/.claude/skills/mariadb-cloud
-```
-
-The skill is then available at `~/.claude/skills/mariadb-cloud/`.
-
-### OpenAI Codex
+Claude uses `~/.claude/skills/` rather than the standard `~/.agents/skills/` path, so a
+manual install is needed:
 
 ```bash
-git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git
-cp -r mariadb-cloud-skill ~/.agents/skills/mariadb-cloud
+git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git /tmp/mariadb-cloud-skill
+mkdir -p ~/.claude/skills
+cp -r /tmp/mariadb-cloud-skill ~/.claude/skills/mariadb-cloud
 ```
+
+Then restart Claude Desktop — the skill appears under **Customize → Skills**.
 
 For the best results, pair it with the community engine skills:
 `npx skills add mariadb/skills`.
