@@ -127,18 +127,22 @@ npx -y skills add mariadb-JagsR/mariadb-cloud-skill --all
 # target a specific set of agents (repeat --agent as needed):
 npx -y skills add mariadb-JagsR/mariadb-cloud-skill \
   --skill '*' --agent <agent-name> [--agent <agent-name> ...] -y
-
-# same pattern for the companion community engine skills:
-npx -y skills add mariadb/skills \
-  --skill '*' --agent <agent-name> [--agent <agent-name> ...] -y
 ```
 
 `--agent` values are the identifiers exposed by the upstream `skills` CLI —
 e.g. `claude-code`, `codex`, `cursor`, `windsurf`, `devin`, `warp`, `cline`,
 `gemini-cli`, `amp`. Run `npx skills add --help` to see the current list.
 
-For the best results, pair it with the community engine skills:
-`npx skills add mariadb/skills` (or the non-interactive variant above).
+### Optional: pair with the community engine skills
+
+This skill is the **cloud overlay**; it defers to the community MariaDB skills for
+engine-level questions (SQL, vectors, query optimization, replication mechanics,
+migration). Installing them is not required — the skill works standalone — but if you
+also want the engine layer, install them separately when you need them:
+
+```bash
+npx skills add mariadb/skills                       # interactive picker
+```
 
 ## Usage
 
