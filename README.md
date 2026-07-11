@@ -65,34 +65,75 @@ npx skills add mariadb/skills/mariadb-mcp
 
 ## Installation
 
-### Cursor, Codex, Amp, Cline, Gemini CLI, Warp, and others
+### Recommended: `scripts/install.sh` (one-shot, no manual copy)
+
+The upstream `npx skills add` CLI currently installs only `SKILL.md` and drops the
+`references/` folder that the skill relies on. The bundled installer takes care of both
+`SKILL.md` and `references/`, and writes to the on-disk path each agent expects.
+
+```bash
+git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git
+cd mariadb-cloud-skill
+
+# install for every supported agent (Claude + Cursor/Codex/Windsurf/Devin/...)
+scripts/install.sh
+
+# or target a subset:
+scripts/install.sh claude       # ~/.claude/skills/mariadb-cloud
+scripts/install.sh agents       # ~/.agents/skills/mariadb-cloud
+```
+
+Restart Claude Desktop after installing for `claude` — the skill appears under
+**Customize → Skills**. Claude Code, Cursor, Codex, Windsurf, and Devin pick the skill up
+on the next session without a restart.
+
+### Which path does each tool read?
+
+| Tool                            | Skill root                     | Notes                                    |
+| ------------------------------- | ------------------------------ | ---------------------------------------- |
+| Claude Desktop / Claude Code    | `~/.claude/skills/`            | Global; restart Claude Desktop.          |
+| Cursor, Codex, Windsurf, Devin, Cline, Gemini CLI, Warp, Amp | `~/.agents/skills/` (home) or `<project>/.agents/skills/` (project) | Project path wins when set. |
+
+`scripts/install.sh` writes to `~/.claude/skills/` and `~/.agents/skills/` respectively; use
+`CLAUDE_SKILLS_DIR` / `AGENTS_SKILLS_DIR` env vars to override, or point them at a project
+`.agents/skills/` directory to install locally.
+
+### Alternative: `npx skills add` (CLI, interactive)
 
 ```bash
 npx skills add mariadb-JagsR/mariadb-cloud-skill
 ```
 
-Then copy the `references/` folder manually — the CLI currently installs only `SKILL.md`:
+Then copy the `references/` folder manually — the CLI installs only `SKILL.md`:
 
 ```bash
 git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git /tmp/mariadb-cloud-skill
 cp -r /tmp/mariadb-cloud-skill/references ~/.agents/skills/mariadb-cloud/
-```
-
-### Claude Code / Claude Desktop
-
-Claude uses `~/.claude/skills/` rather than the standard `~/.agents/skills/` path, so a
-manual install is needed:
-
-```bash
-git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git /tmp/mariadb-cloud-skill
+# for Claude:
 mkdir -p ~/.claude/skills
 cp -r /tmp/mariadb-cloud-skill ~/.claude/skills/mariadb-cloud
 ```
 
-Then restart Claude Desktop — the skill appears under **Customize → Skills**.
+### Non-interactive install (for scripting)
+
+The `skills` CLI opens an interactive picker by default. To install headlessly for a
+specific set of agents, pass `--skill`, `--agent`, and `-y`:
+
+```bash
+# this skill, for Claude Code + Devin only, no prompts:
+npx -y skills add mariadb-JagsR/mariadb-cloud-skill \
+  --skill '*' --agent claude-code --agent devin -y
+
+# all community engine skills, for Claude Code + Devin only:
+npx -y skills add mariadb/skills \
+  --skill '*' --agent claude-code --agent devin -y
+
+# every skill for every detected agent (shorthand):
+npx -y skills add mariadb-JagsR/mariadb-cloud-skill --all
+```
 
 For the best results, pair it with the community engine skills:
-`npx skills add mariadb/skills`.
+`npx skills add mariadb/skills` (or the non-interactive variant above).
 
 ## Usage
 
@@ -118,6 +159,8 @@ references/
   serverless.md               # serverless architecture, scale-to-zero, dynamic regions
   connection.md               # TLS, fqdn, ports, allowlist, managed MaxScale
   mcp-server.md               # skysql-mcp tools + SkyAI agents; vs community mariadb-mcp
+scripts/
+  install.sh                  # copy SKILL.md + references/ into ~/.claude and/or ~/.agents
 ```
 
 `SKILL.md` is always loaded; the agent reads only the `references/` file that matches the task.
