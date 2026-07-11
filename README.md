@@ -98,21 +98,41 @@ on the next session without a restart.
 `CLAUDE_SKILLS_DIR` / `AGENTS_SKILLS_DIR` env vars to override, or point them at a project
 `.agents/skills/` directory to install locally.
 
-### Alternative: `npx skills add` (CLI, interactive)
+### Alternative: `npx skills add` (CLI)
+
+#### Cursor, Codex, Amp, Cline, Gemini CLI, Warp, and others
 
 ```bash
 npx skills add mariadb-JagsR/mariadb-cloud-skill
 ```
 
-Then copy the `references/` folder manually — the CLI installs only `SKILL.md`:
+Then copy the `references/` folder manually — the CLI currently installs only `SKILL.md`:
 
 ```bash
 git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git /tmp/mariadb-cloud-skill
 cp -r /tmp/mariadb-cloud-skill/references ~/.agents/skills/mariadb-cloud/
-# for Claude:
+```
+
+#### Claude Code / Claude Desktop
+
+Claude uses `~/.claude/skills/` rather than the standard `~/.agents/skills/` path, so a
+manual install is needed:
+
+```bash
+git clone https://github.com/mariadb-JagsR/mariadb-cloud-skill.git /tmp/mariadb-cloud-skill
 mkdir -p ~/.claude/skills
 cp -r /tmp/mariadb-cloud-skill ~/.claude/skills/mariadb-cloud
 ```
+
+Then restart Claude Desktop — the skill appears under **Customize → Skills**.
+
+For the best results, pair it with the community engine skills:
+`npx skills add mariadb/skills`.
+
+This skill is the **cloud overlay**; it defers to the community MariaDB skills for
+engine-level questions (SQL, vectors, query optimization, replication mechanics,
+migration). Installing them is not required — the skill works standalone — but if you
+also want the engine layer, install them separately when you need them.
 
 ### Non-interactive install (for scripting)
 
@@ -132,17 +152,6 @@ npx -y skills add mariadb-JagsR/mariadb-cloud-skill \
 `--agent` values are the identifiers exposed by the upstream `skills` CLI —
 e.g. `claude-code`, `codex`, `cursor`, `windsurf`, `devin`, `warp`, `cline`,
 `gemini-cli`, `amp`. Run `npx skills add --help` to see the current list.
-
-### Optional: pair with the community engine skills
-
-This skill is the **cloud overlay**; it defers to the community MariaDB skills for
-engine-level questions (SQL, vectors, query optimization, replication mechanics,
-migration). Installing them is not required — the skill works standalone — but if you
-also want the engine layer, install them separately when you need them:
-
-```bash
-npx skills add mariadb/skills                       # interactive picker
-```
 
 ## Usage
 
